@@ -33,6 +33,16 @@ class KotobaFlipGame {
     this.dom = {};
   }
 
+  vibrate(pattern) {
+    if ('vibrate' in navigator) {
+      try {
+        navigator.vibrate(pattern);
+      } catch (e) {
+        // Safe fallback if unsupported or disallowed
+      }
+    }
+  }
+
   init() {
     this.cacheDom();
     this.bindEvents();
@@ -447,6 +457,7 @@ class KotobaFlipGame {
     const card = this.cards[index];
     if (card.isFlipped || card.isMatched) return;
 
+    this.vibrate(15);
     card.isFlipped = true;
     cardEl.classList.add('flipped');
     window.arcadeAudio.playFlip();
@@ -479,6 +490,12 @@ class KotobaFlipGame {
       const roundScore = baseScore * this.combo;
       this.score += roundScore;
       this.matchedPairs++;
+
+      if (this.combo >= 3) {
+        this.vibrate([35, 30, 35, 30, 50]);
+      } else {
+        this.vibrate([25, 40, 25]);
+      }
 
       setTimeout(() => {
         c1.el.classList.add('matched');
@@ -515,6 +532,7 @@ class KotobaFlipGame {
     } else {
       this.combo = 1;
       setTimeout(() => {
+        this.vibrate([45, 35, 45]);
         window.arcadeAudio.playMismatch();
         c1.card.isFlipped = false;
         c2.card.isFlipped = false;
@@ -530,6 +548,7 @@ class KotobaFlipGame {
 
   useHint() {
     if (this.hintsLeft <= 0 || this.isLocked || this.isPaused) return;
+    this.vibrate([25, 35, 25]);
     this.hintsLeft--;
     this.updateHUD();
     window.arcadeAudio.playHint();
@@ -689,6 +708,7 @@ class KotobaFlipGame {
 
   handleVictory() {
     this.stopTimer();
+    this.vibrate([100, 50, 100, 50, 200]);
     window.arcadeAudio.playVictory();
 
     const timeBonus = this.timeLeft * 25;
@@ -882,6 +902,7 @@ class KotobaFlipGame {
 
   insertCoin() {
     this.credits++;
+    this.vibrate([20, 30, 20]);
     this.dom.headerCredits.textContent = String(this.credits).padStart(2, '0');
     this.dom.footerCredits.textContent = String(this.credits).padStart(2, '0');
     window.arcadeAudio.playCoin();
