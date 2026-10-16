@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOTOBA FLIP - Kotoba Flip Arcade System | Neo-Tokyo Japanese Memory Game</title>
+  <meta name="description" content="Mesin arcade memori kosakata bahasa Jepang bertema Neo-Tokyo retro. Cocokkan kartu Katakana, Kanji, dan kosakata N5 dengan padanan artinya!">
+  <!-- Google Fonts: Space Grotesk, Rubik & Press Start 2P -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;900&family=Space+Grotesk:wght@500;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="crt-enabled">
+  <!-- Scanline Overlay Effect -->
+  <div class="crt-scanlines" id="crtOverlay"></div>
+  <div class="arcade-glow-vignette"></div>
+
+  <!-- Comic Burst Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Top App Navigation -->
+  <header class="app-header">
+    <div class="header-inner">
+      <!-- Logo -->
+      <div class="brand-group" id="brandLogoHome" role="button" tabindex="0" title="Kembali ke Menu Utama">
+        <div class="brand-icon">
+          <span class="brand-icon-inner">🎴</span>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">KOTOBA <span>FLIP</span></h1>
+          <p class="brand-subtitle">ことばフリップ・ARCADE SYSTEM</p>
+        </div>
+      </div>
+
+      <!-- Center Tabs -->
+      <nav class="nav-pill-container" aria-label="Main Navigation">
+        <button class="nav-tab active" id="tabTitleMenu" data-tab="title">
+          <span class="tab-dot"></span> TITLE MENU
+        </button>
+        <button class="nav-tab" id="tabPlayStage" data-tab="play">
+          PLAY STAGE
+        </button>
+        <button class="nav-tab" id="tabDeckGallery" data-tab="gallery">
+          DECK GALLERY
+        </button>
+        <button class="nav-tab" id="tabHallOfFame" data-tab="hall">
+          HALL OF FAME
+        </button>
+      </nav>
+
+      <!-- Right Cabinet Status & Credits -->
+      <div class="header-right-actions">
+        <div class="cabinet-status-pill">
+          <span class="status-indicator"></span>
+          <span class="status-label">CABINET READY</span>
+        </div>
+        <button class="coin-insert-btn" id="coinInsertBtn" title="Masukkan Koin Arcade (Tambahkan Kredit)">
+          <span class="coin-icon">🪙</span>
+          <span class="coin-txt">CREDITS: <strong id="headerCredits">09</strong></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       SCREEN 1: MENU UTAMA (TITLE MENU SCREEN - EXACT FROM STITCH)
+       ========================================================================= -->
+  <div class="screen-view active" id="viewTitleMenu">
+    <!-- Sub-Bar Status for Title Menu -->
+    <section class="stage-subbar title-subbar">
+      <div class="subbar-left">
+        <div class="sys-bios-badge">
+          <span class="bios-dot">●</span>
+          <span>SYS.VER 2.0.26 NEO-GEO ARCADE BIOS</span>
+        </div>
+      </div>
+      <div class="subbar-right">
+        <button class="arcade-toggle-btn active" id="titleCrtToggleBtn">
+          <span class="toggle-icon">📺</span> CRT FILTER: <strong id="titleCrtText">ON</strong>
+        </button>
+        <button class="arcade-toggle-btn" id="titleBgmToggleBtn">
+          <span class="toggle-icon">🔊</span> CHIPTUNE: <strong id="titleBgmText">INACTIVE</strong>
+        </button>
+        <div class="free-play-badge">
+          <span class="coin-spin">🪙</span> FREE PLAY • ∞ COINS
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Arcade Cabinet for Menu Utama -->
+    <main class="arcade-main-container">
+      <div class="arcade-cabinet title-cabinet">
+        <!-- 4 Metal Chassis Bolts -->
+        <span class="cabinet-bolt bolt-tl"></span>
+        <span class="cabinet-bolt bolt-tr"></span>
+        <span class="cabinet-bolt bolt-bl"></span>
+        <span class="cabinet-bolt bolt-br"></span>
+
+        <!-- Hero Marquee Section -->
+        <div class="title-hero-marquee">
+          <div class="marquee-system-tag">
+            <span>🪙 FLASH CARD MATCHING CAROUSEL SYSTEM 🪙</span>
+          </div>
+
+          <div class="title-huge-logo">
+            <span class="logo-kotoba">KOTOBA</span>
+            <span class="logo-flip">FLIP</span>
+          </div>
+
+          <div class="title-japanese-subtitle">
+            ことばフリップ・ARCADE STAGE
+          </div>
+
+          <!-- Creator Pill Badge -->
+          <div class="creator-credential-box">
+            <div class="creator-tag">
+              <span class="creator-icon">💼</span>
+              <span>CREATED BY <strong>NAEL</strong> • ナエル制作</span>
+            </div>
+            <p class="creator-subtext">ナエルによって作成されました・クリエイター：ナエル</p>
+          </div>
+
+          <!-- Hall of Fame Leader Ribbon -->
+          <div class="hof-leader-ribbon">
+            <div class="hof-leader-left">
+              <div class="hof-trophy-box">🏆</div>
+              <div class="hof-leader-info">
+                <span class="hof-label">HALL OF FAME LEADER</span>
+                <span class="hof-score">9,850 PTS • <strong>NAEL-SENPAI</strong></span>
+              </div>
+            </div>
+            <div class="hof-leader-right">
+              <span class="hof-streak-badge">⚡ STREAK: 14 PAIRS PERFECT</span>
+            </div>
+          </div>
+
+          <!-- Big Primary Insert Coin Button -->
+          <div class="main-cta-wrapper">
+            <button class="btn-main-insert-coin" id="btnMainPlay" title="Mulai Permainan Kotoba Flip">
+              <span class="play-icon">▶</span>
+              <span class="play-text">INSERT COIN / MULAI MAIN</span>
+              <span class="controller-icon">🎮</span>
+            </button>
+            <p class="cta-keyboard-hint">PRESS ENTER ATAU TAP TOMBOL DI ATAS</p>
+          </div>
+        </div>
+
+        <!-- 4 Game Mode Navigation Cards Grid -->
+        <div class="title-modes-grid">
+          <!-- Card 1: JLPT N5 -->
+          <div class="title-mode-card card-n5" id="modeCardN5" role="button" tabindex="0">
+            <div class="mode-card-header">
+              <span class="mode-badge badge-rekomendasi">REKOMENDASI</span>
+              <span class="mode-arrow">→</span>
+            </div>
+            <h2 class="mode-title">JLPT N5</h2>
+            <div class="mode-sub">5×6 MATRIX MATCH</div>
+            <p class="mode-desc">
+              Kosakata dasar N5, Hiragana, Katakana, dan Kanji pemula dengan 30 kartu tantangan.
+            </p>
+          </div>
+
+          <!-- Card 2: TIME ATTACK -->
+          <div class="title-mode-card card-timeattack" id="modeCardTimeAttack" role="button" tabindex="0">
+            <div class="mode-card-header">
+              <span class="mode-badge badge-speedrun">SPEED RUN</span>
+              <span class="mode-icon-head">⏱</span>
+            </div>
+            <h2 class="mode-title">TIME ATTACK</h2>
+            <div class="mode-sub">60 DETIK BLITZ MODE</div>
+            <p class="mode-desc">
+              Uji refleks bahasa Jepangmu! Dapatkan skor kombo gila-gilaan sebelum peluit berbunyi.
+            </p>
+          </div>
+
+          <!-- Card 3: DECK GALLERY -->
+          <div class="title-mode-card card-gallery" id="modeCardGallery" role="button" tabindex="0">
+            <div class="mode-card-header">
+              <span class="mode-badge badge-archive">ARCHIVE</span>
+              <span class="mode-icon-head">🗂</span>
+            </div>
+            <h2 class="mode-title">DECK GALLERY</h2>
+            <div class="mode-sub">KAMUS &amp; DAFTAR KANJI</div>
+            <p class="mode-desc">
+              Inspeksi kartu yang sudah dibuka, audio pelafalan asli, dan romaji pendukung.
+            </p>
+          </div>
+
+          <!-- Card 4: CARA MAIN -->
+          <div class="title-mode-card card-guide" id="modeCardGuide" role="button" tabindex="0">
+            <div class="mode-card-header">
+              <span class="mode-badge badge-tutorial">TUTORIAL</span>
+              <span class="mode-icon-head">❓</span>
+            </div>
+            <h2 class="mode-title">CARA MAIN</h2>
+            <div class="mode-sub">ATURAN &amp; MEKANISME</div>
+            <p class="mode-desc">
+              Panduan memasangkan Kanji dan arti bahasa Indonesia dalam ketukan ritme arcade.
+            </p>
+          </div>
+        </div>
+
+        <!-- Mascot Dialogue Banner -->
+        <div class="mascot-dialogue-banner">
+          <div class="mascot-avatar-circle">
+            <span class="mascot-avatar-img">🍎</span>
+            <span class="mascot-assist-badge">ASSIST</span>
+          </div>
+          <div class="mascot-dialogue-text">
+            <div class="mascot-dialogue-name">Ringo-chan (りんごちゃん) <span class="mascot-role">ARCADE COMPANION</span></div>
+            <p class="mascot-quote">
+              "Konnichiwa! Ayo cocokkan semua kosakata dan cetak rekor baru hari ini! Semangat belajarnya, Senpai!"
+            </p>
+          </div>
+          <div class="mascot-bonus-pills">
+            <div class="mascot-bonus-pill">
+              <span class="pill-dot">🎁</span> DAILY BONUS: 2X EXP
+            </div>
+            <div class="mascot-bonus-pill">
+              <span class="pill-dot">📖</span> 32 KATA BARU
+            </div>
+          </div>
+        </div>
+
+        <!-- Cabinet Status Underline -->
+        <div class="cabinet-chassis-subtext">
+          <div class="chassis-sub-left">
+            <span class="green-indicator-dot">●</span> CONTROLLER: KEYBOARD / MOUSE / TOUCH READY
+          </div>
+          <div class="chassis-sub-right">
+            CABINET ID: KTB-NEOGEO-JP-08
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       SCREEN 2: PLAY STAGE (GAMEPLAY CHASSIS)
+       ========================================================================= -->
+  <div class="screen-view" id="viewPlayStage">
+    <!-- Stage Sub-Bar Controls -->
+    <section class="stage-subbar">
+      <div class="subbar-left">
+        <button class="back-to-menu-btn" id="btnBackToTitle" title="Kembali ke Menu Utama">
+          <span>◀</span> TITLE MENU
+        </button>
+        <div class="stage-pill-badge" id="currentDeckBadge">
+          <span class="badge-icon">🎮</span>
+          <span class="badge-title">STAGE 01 • N5 CATUR KATA</span>
+        </div>
+        <div class="matrix-select-dropdown">
+          <button class="matrix-mode-btn" id="matrixModeBtn">
+            <span class="matrix-dot">◉</span>
+            <span id="matrixModeLabel">HARD MODE MATRIX [5x6]</span>
+            <span class="arrow-down">▼</span>
+          </button>
+          <div class="matrix-options" id="matrixOptions">
+            <div class="matrix-option" data-mode="normal">
+              <strong>NORMAL MATRIX [4x3]</strong>
+              <span>12 Balok (6 Pasangan Cepat)</span>
+            </div>
+            <div class="matrix-option active" data-mode="hard">
+              <strong>HARD MODE MATRIX [5x6]</strong>
+              <span>30 Balok (15 Pasangan Penuh)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subbar-right">
+        <button class="arcade-toggle-btn active" id="crtToggleBtn" title="Aktifkan / Matikan Efek Layar CRT">
+          <span class="toggle-icon">📺</span> CRT SCANLINE: <strong id="crtStateText">ON</strong>
+        </button>
+        <button class="arcade-toggle-btn" id="bgmToggleBtn" title="Aktifkan / Matikan Musik BGM Retro">
+          <span class="toggle-icon">🔊</span> BGM: <strong id="bgmStateText">OFF</strong>
+        </button>
+        <button class="arcade-toggle-btn active" id="voiceToggleBtn" title="Suara Pengucapan Bahasa Jepang">
+          <span class="toggle-icon">🗣️</span> VOICE: <strong id="voiceStateText">ON</strong>
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Arcade Stage Viewport -->
+    <main class="arcade-main-container">
+      <div class="arcade-cabinet" id="arcadeCabinet">
+        <!-- 4 Metal Chassis Rivets / Bolts -->
+        <span class="cabinet-bolt bolt-tl"></span>
+        <span class="cabinet-bolt bolt-tr"></span>
+        <span class="cabinet-bolt bolt-bl"></span>
+        <span class="cabinet-bolt bolt-br"></span>
+
+        <!-- Arcade Top HUD Bar -->
+        <section class="cabinet-hud">
+          <div class="hud-category-chip">
+            <span class="category-icon">文</span>
+            <div class="category-info">
+              <span class="category-type" id="hudDeckSub">KATAKANA MATCH</span>
+              <span class="category-name" id="hudDeckName">JLPT N5 • CATUR KATA</span>
+            </div>
+          </div>
+
+          <div class="hud-stat-box timer-box">
+            <span class="stat-label">WAKTU</span>
+            <div class="stat-display">
+              <span class="digital-digits" id="timerValue">02:00</span>
+            </div>
+            <div class="timer-gauge-track">
+              <div class="timer-gauge-bar" id="timerGaugeBar"></div>
+            </div>
+          </div>
+
+          <div class="hud-stat-box turns-box">
+            <span class="stat-label">TURNS</span>
+            <div class="stat-display">
+              <span class="digital-digits" id="turnsValue">00</span>
+            </div>
+          </div>
+
+          <div class="combo-skew-badge" id="comboBadge">
+            <span class="combo-icon">⚡</span>
+            <span class="combo-text" id="comboValue">COMBO x1</span>
+          </div>
+
+          <div class="hud-stat-box score-box">
+            <span class="stat-label">SKOR</span>
+            <div class="stat-display">
+              <span class="score-digits" id="scoreValue">0</span>
+            </div>
+          </div>
+
+          <div class="hud-action-group">
+            <button class="arcade-btn-hint" id="hintBtn" title="Bantuan Ringo-chan (Ungkap 2 Pasangan Balok)">
+              <span class="btn-icon">💡</span> HINT [<span id="hintCount">02</span>]
+            </button>
+            <button class="arcade-btn-pause" id="pauseBtn" title="Jeda Permainan">
+              <span id="pauseBtnIcon">⏸</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Matrix Cards Stage (Interactive 5x6 or 4x3 Grid) -->
+        <section class="cabinet-matrix-container">
+          <div class="card-grid hard-grid" id="cardGrid">
+            <!-- Dynamic memory cards generated via JS -->
+          </div>
+        </section>
+
+        <!-- Arcade Bottom Status Rail -->
+        <footer class="cabinet-bottom-bar">
+          <div class="bottom-stat-group">
+            <div class="block-counter-label">
+              <span class="counter-icon">🧱</span>
+              <span>SISA BALOK</span>
+            </div>
+            <div class="block-count-digits">
+              <strong id="remainingBlocks">30</strong> / <span id="totalBlocks">30</span> BALOK TERSISA
+            </div>
+            <div class="block-progress-segmented" id="blockSegments">
+              <!-- Segments injected via JS -->
+            </div>
+          </div>
+
+          <div class="pair-counter-pill">
+            <span class="pair-icon">🎴</span>
+            <span><strong id="matchedPairsCount">0</strong> / <span id="totalPairsCount">15</span> PAIR</span>
+          </div>
+
+          <div class="kotoba-live-log">
+            <span class="log-title">KOTOBA LOG:</span>
+            <div class="log-ticker-scroll" id="logTicker">
+              <span class="log-empty">Flip balok untuk memulai permainan!</span>
+            </div>
+          </div>
+
+          <div class="cabinet-controls-group">
+            <button class="arcade-action-btn btn-shuffle" id="shuffleBtn" title="Acak kembali balok yang tersisa">
+              <span>🔀</span> SHUFFLE
+            </button>
+            <button class="arcade-action-btn btn-guide" id="guideBtn" title="Buka Panduan Bermain">
+              <span>📖</span> PANDUAN
+            </button>
+            <button class="arcade-action-btn btn-restart" id="restartBtn" title="Ulangi Permainan Ini">
+              <span>🔄</span>
+            </button>
+          </div>
+        </footer>
+      </div>
+
+      <!-- Below-Cabinet Tactical Info Panels -->
+      <div class="tactical-panels-grid">
+        <!-- Mission 1 Panel -->
+        <div class="tactical-card">
+          <div class="tactical-header">
+            <span class="tactical-num">1</span>
+            <h2 class="tactical-title">MISI KATA KATAKANA</h2>
+          </div>
+          <p class="tactical-desc">
+            Temukan 15 pasang kosakata N5 sebelum waktu habis. Gabungkan tulisan Katakana asli dengan padanan Bahasa Indonesia / English.
+          </p>
+          <div class="tactical-footer">
+            <span class="pill-label">EXP BONUS</span>
+            <span class="bonus-value">+350 PTS / PAIR</span>
+          </div>
+        </div>
+
+        <!-- Mission 2 Panel -->
+        <div class="tactical-card">
+          <div class="tactical-header">
+            <span class="tactical-num">2</span>
+            <h2 class="tactical-title">COMBO &amp; AKURASI</h2>
+          </div>
+          <p class="tactical-desc">
+            Setiap tebakan benar berturut-turut menggandakan multiplier koin hingga x5. Hindari membuka kartu acak tanpa mengingat posisi!
+          </p>
+          <div class="tactical-footer">
+            <span class="pill-label">COMBO STREAK</span>
+            <span class="bonus-value highlight" id="comboStreakStatus">x1 AKTIF (BONUS x1.0)</span>
+          </div>
+        </div>
+
+        <!-- Mascot Panel -->
+        <div class="tactical-card mascot-card">
+          <div class="mascot-avatar-container">
+            <div class="pixel-mascot-box">
+              <span class="mascot-face">🍎</span>
+              <span class="mascot-sparkle">✨</span>
+            </div>
+          </div>
+          <div class="mascot-details">
+            <div class="mascot-tag">KOTOBA MASCOT</div>
+            <h3 class="mascot-name">Ringo-chan Level 04</h3>
+            <p class="mascot-ability">
+              Mengingatkan 2 pasang kembar saat Hint diaktifkan dengan kekuatan radar koin emas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Bottom Arcade Cabinet Brand Footer -->
+  <footer class="app-footer">
+    <div class="footer-left">
+      <strong>KOTOBA FLIP</strong> MODEL NEO-GEO 2026 EDITION
+    </div>
+    <div class="footer-center">
+      INSERT COIN TO CONTINUE • <span class="credits-glow">● CREDITS: <span id="footerCredits">09</span></span>
+    </div>
+    <div class="footer-right">
+      © 2026 Kotoba Arcade Labs. All arcade rights reserved.
+    </div>
+  </footer>
+
+  <!-- MODALS -->
+
+  <!-- 1. DECK GALLERY MODAL -->
+  <div class="arcade-modal" id="modalDeckGallery" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">📚 DECK GALLERY &amp; KANJI ENCYCLOPEDIA</h2>
+        <button class="modal-close-btn" data-close="modalDeckGallery">✕</button>
+      </div>
+      <div class="modal-deck-selector">
+        <button class="deck-select-chip active" data-deck="katakana">Katakana N5</button>
+        <button class="deck-select-chip" data-deck="kanji_n5">Kanji N5 Master</button>
+        <button class="deck-select-chip" data-deck="tabemono">Makanan (Tabemono)</button>
+      </div>
+      <div class="modal-body">
+        <p class="gallery-intro">Klik pada kartu mana pun untuk mendengar pelafalan asli bahasa Jepang (Voice Audio):</p>
+        <div class="gallery-grid" id="galleryGrid">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="arcade-btn-primary" id="btnPlaySelectedDeck">
+          PILIH DECK INI &amp; MAIN SEKARANG!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. HALL OF FAME MODAL -->
+  <div class="arcade-modal" id="modalHallOfFame" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">🏆 KOTOBA FLIP HALL OF FAME</h2>
+        <button class="modal-close-btn" data-close="modalHallOfFame">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="scoreboard-table-wrapper">
+          <table class="scoreboard-table">
+            <thead>
+              <tr>
+                <th>RANK</th>
+                <th>OPERATOR</th>
+                <th>MODE</th>
+                <th>TURNS</th>
+                <th>WAKTU SISA</th>
+                <th>SKOR TERTINGGI</th>
+              </tr>
+            </thead>
+            <tbody id="scoreboardBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="arcade-btn-secondary" id="btnClearScores">RESET LEADERBOARD</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. PANDUAN MODAL -->
+  <div class="arcade-modal" id="modalGuide" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">📖 PANDUAN BERMAIN KOTOBA FLIP</h2>
+        <button class="modal-close-btn" data-close="modalGuide">✕</button>
+      </div>
+      <div class="modal-body guide-content">
+        <div class="guide-step">
+          <span class="guide-badge">CARA MAIN</span>
+          <h3>1. Temukan Pasangan Kartu Kembar</h3>
+          <p>Satu kartu berisi karakter Jepang (Katakana, Kanji, atau Hiragana) dan kartu pasangannya berisi artinya dalam Bahasa Indonesia / Inggris beserta Romaji.</p>
+        </div>
+        <div class="guide-step">
+          <span class="guide-badge">COMBO</span>
+          <h3>2. Pertahankan Combo Streak</h3>
+          <p>Menebak benar secara berturut-turut akan melipatgandakan poin combo hingga <strong>x5 multiplier</strong>. Jika salah, combo akan tereset ke x1.</p>
+        </div>
+        <div class="guide-step">
+          <span class="guide-badge">HINT</span>
+          <h3>3. Gunakan Bantuan Ringo-chan</h3>
+          <p>Tombol <strong>HINT</strong> akan membukakan 2 pasang kartu kembar sekaligus selama 1.5 detik untuk membantu Anda saat kehabisan waktu!</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="arcade-btn-primary" data-close="modalGuide">MENGERTI, IKUZO!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. VICTORY / GAMEOVER MODAL -->
+  <div class="arcade-modal" id="modalResult" role="dialog" aria-hidden="true">
+    <div class="modal-dialog result-dialog">
+      <div class="result-banner" id="resultBanner">
+        <h2 class="result-title" id="resultTitle">STAGE CLEAR!</h2>
+        <p class="result-subtitle" id="resultSubtitle">SUGOI! KEMAMPUAN BAHASA JEPANG ANDA LUAR BIASA!</p>
+      </div>
+      <div class="modal-body result-stats">
+        <div class="result-stat-grid">
+          <div class="res-box">
+            <span>TOTAL SKOR</span>
+            <strong id="resFinalScore">0</strong>
+          </div>
+          <div class="res-box">
+            <span>WAKTU SISA</span>
+            <strong id="resTimeLeft">00:00</strong>
+          </div>
+          <div class="res-box">
+            <span>TOTAL TURNS</span>
+            <strong id="resTotalTurns">0</strong>
+          </div>
+          <div class="res-box">
+            <span>MAX COMBO</span>
+            <strong id="resMaxCombo">x1</strong>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer result-actions">
+        <button class="arcade-btn-primary" id="btnNextStage">MAIN LAGI (STAGE BARU)</button>
+        <button class="arcade-btn-secondary" data-close="modalResult">KEMBALI KE KABINET</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
